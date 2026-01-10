@@ -6,6 +6,7 @@ Inclui sistema de guardrails para segurança e controle de comportamento.
 """
 
 import os
+import re
 from typing import Optional
 
 from langchain_openai import ChatOpenAI
@@ -40,6 +41,36 @@ Diretrizes:
 6. Para perguntas gerais sobre recomendações, use buscar_tinta_semantica
 7. Se o usuário quiser visualizar como ficaria um ambiente, use visualizar_ambiente
 8. Sempre forneça respostas úteis e contextualizadas"""
+
+
+
+
+def extract_image_urls(text: str) -> list[dict]:
+    """Extrai URLs de imagens DALL-E do texto da resposta."""
+    images = []
+
+    # Primeiro tenta extrair de markdown: ![texto](url)
+    markdown_pattern = r'\!\[.*?\]\((https://oaidalleapiprodscus\.blob\.core\.windows\.net/[^)]+)\)'
+    urls = re.findall(markdown_pattern, text)
+
+    # Se nao encontrou no markdown, tenta URLs soltas
+    if not urls:
+        plain_pattern = r"https://oaidalleapiprodscus[.]blob[.]core[.]windows[.]net/[^\s<>]+"
+        urls = re.findall(plain_pattern, text)
+
+    # Limpa e adiciona sem duplicatas
+    seen = set()
+    for url in urls:
+        url = url.rstrip('.,;:!?)')
+        if url not in seen:
+            seen.add(url)
+            images.append({
+                "url": url,
+                "ambiente": "Ambiente",
+                "cor": "Cor selecionada"
+            })
+
+    return images
 
 
 class AgentService:
@@ -126,11 +157,15 @@ class AgentService:
             if len(self.conversation_history) > 10:
                 self.conversation_history = self.conversation_history[-10:]
 
+            # 8. Extrai URLs de imagens da resposta
+            images = extract_image_urls(response)
+
             return {
                 "response": response,
                 "products": [],
                 "query": user_query,
-                "agent_type": "langgraph"
+                "agent_type": "langgraph",
+                "images": images
             }
 
         except Exception as e:

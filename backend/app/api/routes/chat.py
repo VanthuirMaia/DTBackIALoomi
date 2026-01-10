@@ -10,6 +10,7 @@ from app.schemas.chat import (
     ChatResponse,
     ClearSessionRequest,
     ClearSessionResponse,
+    ImageResponse,
 )
 from app.services.agent_service import get_agent_service, clear_session
 from app.models.user import User
@@ -43,11 +44,18 @@ def chat(
 
         result = agent.process_query(request.message)
 
+        # Converte dicts de imagens para ImageResponse
+        images = [
+            ImageResponse(url=img["url"], ambiente=img["ambiente"], cor=img["cor"])
+            for img in result.get("images", [])
+        ]
+
         return ChatResponse(
             response=result["response"],
             products=result["products"],
             query=result["query"],
-            session_id=session_id
+            session_id=session_id,
+            images=images
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao processar mensagem: {str(e)}")

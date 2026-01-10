@@ -6,6 +6,7 @@ env_path = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(dotenv_path=env_path, override=True)
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.api.routes import paints, chat, auth
@@ -34,6 +35,14 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+# Configuracao CORS para permitir requisicoes do frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Em producao, especificar dominios permitidos
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(auth.router)
 app.include_router(paints.router)
