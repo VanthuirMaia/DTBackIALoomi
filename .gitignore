@@ -90,3 +90,6 @@ Thumbs.db
 # Project specific
 *.sqlite3
 *.db
+
+
+CLAUDE.md
