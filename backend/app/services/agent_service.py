@@ -1,68 +1,107 @@
 """
-Serviço de orquestração do Agente de IA.
+Serviço de orquestração do Agente de IA usando LangChain/LangGraph.
 
-Coordena o fluxo entre RAG (busca semântica) e LLM (geração de resposta).
+O agente decide autonomamente qual ferramenta usar baseado na pergunta do usuário.
 """
 
+import os
 from typing import Optional
 
-from app.services.rag_service import get_rag_service
-from app.services.llm_service import get_llm_service
+from langchain_openai import ChatOpenAI
+from langgraph.prebuilt import create_react_agent
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+
+from app.services.tools import get_tools
+
+
+SYSTEM_PROMPT = """Você é um assistente especialista em tintas Suvinil.
+Seu papel é ajudar clientes a escolherem a tinta ideal para suas necessidades.
+
+Você tem acesso às seguintes ferramentas:
+- buscar_tinta_semantica: Para buscar tintas baseado em descrições em linguagem natural
+- buscar_por_filtros: Para buscar tintas por características específicas (cor, ambiente, acabamento)
+- calcular_quantidade_tinta: Para calcular quantos litros/latas o cliente precisa
+- listar_cores_disponiveis: Para mostrar todas as cores disponíveis
+- listar_linhas_produtos: Para explicar as diferenças entre linhas Premium, Standard e Econômica
+
+Diretrizes:
+1. Seja cordial e profissional
+2. Use as ferramentas apropriadas para cada tipo de pergunta
+3. Explique suas recomendações de forma clara
+4. Se o usuário perguntar sobre quantidade, use a ferramenta de cálculo
+5. Se o usuário quiser filtrar por características específicas, use buscar_por_filtros
+6. Para perguntas gerais sobre recomendações, use buscar_tinta_semantica
+7. Sempre forneça respostas úteis e contextualizadas"""
 
 
 class AgentService:
-    """Orquestrador do agente de recomendação de tintas."""
+    """Agente LangGraph para recomendação de tintas."""
 
     def __init__(self):
-        self.rag = get_rag_service()
-        self.llm = get_llm_service()
-        self.conversation_history: list[dict] = []
+        self.llm = ChatOpenAI(
+            model="gpt-4o-mini",
+            temperature=0.7,
+            api_key=os.getenv("OPENAI_API_KEY")
+        )
+        self.tools = get_tools()
+        self.conversation_history: list = [SystemMessage(content=SYSTEM_PROMPT)]
+        self.agent = create_react_agent(
+            self.llm,
+            self.tools
+        )
 
     def process_query(self, user_query: str, top_k: int = 5) -> dict:
         """
-        Processa uma pergunta do usuário.
+        Processa uma pergunta do usuário usando o agente LangGraph.
 
-        Fluxo:
-        1. Busca produtos relevantes via RAG
-        2. Gera resposta contextualizada via LLM
-        3. Atualiza histórico da conversa
+        O agente decide autonomamente qual ferramenta usar.
 
         Args:
             user_query: Pergunta do usuário
-            top_k: Número de produtos a buscar no RAG
+            top_k: Não usado nesta versão (mantido para compatibilidade)
 
         Returns:
-            Dict com resposta e produtos relacionados
+            Dict com resposta e metadados
         """
-        # 1. Busca semântica
-        relevant_products = self.rag.search(user_query, top_k=top_k)
+        try:
+            # Prepara mensagens com histórico
+            messages = self.conversation_history + [HumanMessage(content=user_query)]
 
-        # 2. Geração de resposta
-        response = self.llm.generate_response(
-            user_query=user_query,
-            context=relevant_products,
-            conversation_history=self.conversation_history
-        )
+            # Invoca o agente
+            result = self.agent.invoke({"messages": messages})
 
-        # 3. Atualiza histórico
-        self.conversation_history.append({"role": "user", "content": user_query})
-        self.conversation_history.append({"role": "assistant", "content": response})
+            # Extrai a última resposta do agente
+            response = result["messages"][-1].content
 
-        # Limita histórico para evitar contexto muito grande
-        if len(self.conversation_history) > 10:
-            self.conversation_history = self.conversation_history[-10:]
+            # Atualiza histórico
+            self.conversation_history.append(HumanMessage(content=user_query))
+            self.conversation_history.append(AIMessage(content=response))
 
-        return {
-            "response": response,
-            "products": relevant_products,
-            "query": user_query
-        }
+            # Limita histórico
+            if len(self.conversation_history) > 10:
+                self.conversation_history = self.conversation_history[-10:]
+
+            return {
+                "response": response,
+                "products": [],
+                "query": user_query,
+                "agent_type": "langgraph"
+            }
+
+        except Exception as e:
+            return {
+                "response": f"Desculpe, ocorreu um erro ao processar sua pergunta: {str(e)}",
+                "products": [],
+                "query": user_query,
+                "agent_type": "langgraph",
+                "error": str(e)
+            }
 
     def clear_history(self) -> None:
         """Limpa o histórico da conversa."""
-        self.conversation_history = []
+        self.conversation_history = [SystemMessage(content=SYSTEM_PROMPT)]
 
-    def get_history(self) -> list[dict]:
+    def get_history(self) -> list:
         """Retorna o histórico da conversa."""
         return self.conversation_history.copy()
 
