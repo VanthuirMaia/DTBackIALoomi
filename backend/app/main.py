@@ -1,3 +1,10 @@
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Carrega .env antes de qualquer import que use variáveis de ambiente
+env_path = Path(__file__).resolve().parent.parent / ".env"
+load_dotenv(dotenv_path=env_path, override=True)
+
 from fastapi import FastAPI
 
 from app.api.routes import paints, chat
