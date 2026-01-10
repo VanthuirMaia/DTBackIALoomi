@@ -2,6 +2,7 @@
 Serviço de orquestração do Agente de IA usando LangChain/LangGraph.
 
 O agente decide autonomamente qual ferramenta usar baseado na pergunta do usuário.
+Inclui sistema de guardrails para segurança e controle de comportamento.
 """
 
 import os
@@ -12,6 +13,11 @@ from langgraph.prebuilt import create_react_agent
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 
 from app.services.tools import get_tools
+from app.services.guardrails_service import (
+    get_guardrails_service,
+    GuardrailViolation,
+    GuardrailViolationType
+)
 
 
 SYSTEM_PROMPT = """Você é um assistente especialista em tintas Suvinil.
@@ -49,12 +55,14 @@ class AgentService:
             self.llm,
             self.tools
         )
+        self.guardrails = get_guardrails_service()
 
     def process_query(self, user_query: str, top_k: int = 5) -> dict:
         """
         Processa uma pergunta do usuário usando o agente LangGraph.
 
         O agente decide autonomamente qual ferramenta usar.
+        Inclui validação de guardrails para segurança.
 
         Args:
             user_query: Pergunta do usuário
@@ -64,20 +72,55 @@ class AgentService:
             Dict com resposta e metadados
         """
         try:
-            # Prepara mensagens com histórico
+            # 1. Validação de input via guardrails
+            try:
+                is_valid, validation_msg = self.guardrails.validate_input(user_query)
+
+                if not is_valid:
+                    if validation_msg == "off_topic":
+                        return {
+                            "response": self.guardrails.get_off_topic_response(),
+                            "products": [],
+                            "query": user_query,
+                            "agent_type": "langgraph",
+                            "guardrail_triggered": "off_topic"
+                        }
+                    return {
+                        "response": validation_msg,
+                        "products": [],
+                        "query": user_query,
+                        "agent_type": "langgraph",
+                        "guardrail_triggered": "invalid_input"
+                    }
+
+            except GuardrailViolation as gv:
+                return {
+                    "response": gv.message,
+                    "products": [],
+                    "query": user_query,
+                    "agent_type": "langgraph",
+                    "guardrail_triggered": gv.violation_type.value
+                }
+
+            # 2. Prepara mensagens com histórico
             messages = self.conversation_history + [HumanMessage(content=user_query)]
 
-            # Invoca o agente
+            # 3. Invoca o agente
             result = self.agent.invoke({"messages": messages})
 
-            # Extrai a última resposta do agente
+            # 4. Extrai a última resposta do agente
             response = result["messages"][-1].content
 
-            # Atualiza histórico
+            # 5. Validação de output via guardrails
+            is_output_valid, validated_output = self.guardrails.validate_output(response)
+            if not is_output_valid:
+                response = validated_output  # Usa mensagem de erro sanitizada
+
+            # 6. Atualiza histórico
             self.conversation_history.append(HumanMessage(content=user_query))
             self.conversation_history.append(AIMessage(content=response))
 
-            # Limita histórico
+            # 7. Limita histórico
             if len(self.conversation_history) > 10:
                 self.conversation_history = self.conversation_history[-10:]
 
