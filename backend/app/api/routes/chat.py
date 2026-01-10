@@ -1,9 +1,9 @@
 """
-Endpoints do chatbot de recomendação de tintas.
+Endpoints do chatbot de recomendacao de tintas.
 """
 
 import uuid
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
 from app.schemas.chat import (
     ChatRequest,
@@ -12,6 +12,8 @@ from app.schemas.chat import (
     ClearSessionResponse,
 )
 from app.services.agent_service import get_agent_service, clear_session
+from app.models.user import User
+from app.api.deps import get_authenticated_user
 
 router = APIRouter(prefix="/chat", tags=["Chat"])
 
@@ -20,18 +22,23 @@ router = APIRouter(prefix="/chat", tags=["Chat"])
     "",
     response_model=ChatResponse,
     summary="Enviar mensagem para o assistente",
-    description="Envia uma pergunta sobre tintas e recebe uma recomendação personalizada."
+    description="Envia uma pergunta sobre tintas e recebe uma recomendacao personalizada. Requer autenticacao."
 )
-def chat(request: ChatRequest) -> ChatResponse:
+def chat(
+    request: ChatRequest,
+    user: User = Depends(get_authenticated_user)
+) -> ChatResponse:
     """
-    Processa uma mensagem do usuário e retorna recomendação.
+    Processa uma mensagem do usuario e retorna recomendacao.
 
     - Busca produtos relevantes via RAG
     - Gera resposta contextualizada via LLM
-    - Mantém histórico se session_id fornecido
+    - Mantem historico se session_id fornecido
+    - Requer usuario autenticado
     """
     try:
-        session_id = request.session_id or str(uuid.uuid4())
+        # Usa user.id como parte do session_id para isolar conversas
+        session_id = request.session_id or f"user-{user.id}-{uuid.uuid4()}"
         agent = get_agent_service(session_id)
 
         result = agent.process_query(request.message)
@@ -49,20 +56,23 @@ def chat(request: ChatRequest) -> ChatResponse:
 @router.post(
     "/clear",
     response_model=ClearSessionResponse,
-    summary="Limpar histórico da sessão",
-    description="Remove o histórico de conversa de uma sessão."
+    summary="Limpar historico da sessao",
+    description="Remove o historico de conversa de uma sessao. Requer autenticacao."
 )
-def clear_chat_session(request: ClearSessionRequest) -> ClearSessionResponse:
-    """Limpa o histórico de uma sessão específica."""
+def clear_chat_session(
+    request: ClearSessionRequest,
+    user: User = Depends(get_authenticated_user)
+) -> ClearSessionResponse:
+    """Limpa o historico de uma sessao especifica. Requer autenticacao."""
     success = clear_session(request.session_id)
 
     if success:
         return ClearSessionResponse(
             success=True,
-            message=f"Sessão {request.session_id} limpa com sucesso."
+            message=f"Sessao {request.session_id} limpa com sucesso."
         )
     else:
         return ClearSessionResponse(
             success=False,
-            message=f"Sessão {request.session_id} não encontrada."
+            message=f"Sessao {request.session_id} nao encontrada."
         )
