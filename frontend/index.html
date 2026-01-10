@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistente de Tintas Suvinil</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Tela de Autenticação -->
+    <div id="auth-container" class="container">
+        <div class="auth-card">
+            <div class="logo">
+                <div class="paint-icon">
+                    <span class="drop drop-1"></span>
+                    <span class="drop drop-2"></span>
+                    <span class="drop drop-3"></span>
+                </div>
+                <h1>Assistente de Tintas</h1>
+                <p class="subtitle">Suvinil</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form active">
+                <h2>Entrar</h2>
+                <div class="form-group">
+                    <label for="login-email">E-mail</label>
+                    <input type="email" id="login-email" placeholder="seu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Senha</label>
+                    <input type="password" id="login-password" placeholder="Sua senha" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Entrar</button>
+                <p class="toggle-text">
+                    Não tem conta? <a href="#" id="show-register">Cadastre-se</a>
+                </p>
+            </form>
+
+            <!-- Register Form -->
+            <form id="register-form" class="auth-form">
+                <h2>Cadastrar</h2>
+                <div class="form-group">
+                    <label for="register-name">Nome</label>
+                    <input type="text" id="register-name" placeholder="Seu nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">E-mail</label>
+                    <input type="email" id="register-email" placeholder="seu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Senha</label>
+                    <input type="password" id="register-password" placeholder="Mínimo 6 caracteres" required minlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+                <p class="toggle-text">
+                    Já tem conta? <a href="#" id="show-login">Entrar</a>
+                </p>
+            </form>
+
+            <div id="auth-error" class="error-message"></div>
+        </div>
+    </div>
+
+    <!-- Tela de Chat -->
+    <div id="chat-container" class="container hidden">
+        <header class="chat-header">
+            <div class="header-left">
+                <div class="paint-icon small">
+                    <span class="drop drop-1"></span>
+                    <span class="drop drop-2"></span>
+                    <span class="drop drop-3"></span>
+                </div>
+                <div class="header-title">
+                    <h1>Assistente de Tintas</h1>
+                    <span class="user-name" id="user-name"></span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button id="clear-chat" class="btn btn-secondary" title="Limpar conversa">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                    </svg>
+                </button>
+                <button id="logout-btn" class="btn btn-secondary" title="Sair">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <main class="chat-main">
+            <div id="messages" class="messages">
+                <div class="welcome-message">
+                    <div class="paint-palette">
+                        <span style="background: #E63946;"></span>
+                        <span style="background: #F4A261;"></span>
+                        <span style="background: #E9C46A;"></span>
+                        <span style="background: #2A9D8F;"></span>
+                        <span style="background: #264653;"></span>
+                    </div>
+                    <h2>Olá! Sou seu assistente de tintas.</h2>
+                    <p>Posso ajudar você a:</p>
+                    <ul>
+                        <li>Encontrar a tinta ideal para seu projeto</li>
+                        <li>Calcular a quantidade necessária</li>
+                        <li>Sugerir cores para cada ambiente</li>
+                        <li>Visualizar como ficaria o ambiente pintado</li>
+                    </ul>
+                    <p class="hint">Experimente perguntar: "Qual tinta usar para pintar um quarto de bebê?"</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="chat-footer">
+            <form id="chat-form" class="chat-input-container">
+                <input
+                    type="text"
+                    id="chat-input"
+                    placeholder="Digite sua pergunta sobre tintas..."
+                    autocomplete="off"
+                    required
+                >
+                <button type="submit" class="btn btn-send" id="send-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                    </svg>
+                </button>
+            </form>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Processando...</p>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="image-modal" class="modal hidden">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <img id="modal-image" src="" alt="Visualização do ambiente">
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

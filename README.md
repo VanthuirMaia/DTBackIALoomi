@@ -9,6 +9,7 @@ API backend para um assistente virtual especializado em tintas, desenvolvido com
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Configuracao e Instalacao](#configuracao-e-instalacao)
 - [Execucao](#execucao)
+- [Frontend](#frontend)
 - [Endpoints da API](#endpoints-da-api)
 - [Exemplos de Uso](#exemplos-de-uso)
 - [Decisoes Tecnicas](#decisoes-tecnicas)
@@ -78,7 +79,8 @@ O sistema segue uma arquitetura em camadas com um agente de IA orquestrador:
 | Agente IA | LangChain + LangGraph | 0.3.14 / 0.2.62 |
 | Geracao de Imagens | OpenAI DALL-E 3 | - |
 | Containerizacao | Docker + Docker Compose | - |
-| Linguagem | Python | 3.11 |
+| Linguagem Backend | Python | 3.11 |
+| Frontend | HTML + CSS + JavaScript | ES6+ |
 
 ## Estrutura do Projeto
 
@@ -88,6 +90,15 @@ BackIALoomi/
 ├── docker-compose.yml
 ├── requirements.txt
 ├── .env.example
+│
+├── frontend/
+│   ├── index.html              # Pagina principal
+│   ├── css/
+│   │   └── style.css           # Estilos da aplicacao
+│   └── js/
+│       ├── app.js              # Orquestracao da aplicacao
+│       ├── auth.js             # Autenticacao (login/registro)
+│       └── chat.js             # Interface de chat
 │
 └── backend/
     ├── app/
@@ -216,6 +227,67 @@ docker-compose up
 - API: http://localhost:8000
 - Documentacao Swagger: http://localhost:8000/docs
 - Health Check: http://localhost:8000/health
+
+## Frontend
+
+O projeto inclui uma interface web moderna desenvolvida em HTML, CSS e JavaScript vanilla (sem frameworks).
+
+### Estrutura
+
+```
+frontend/
+├── index.html          # Pagina principal com telas de auth e chat
+├── css/
+│   └── style.css       # Design responsivo e moderno
+└── js/
+    ├── app.js          # Orquestracao e gerenciamento de estado
+    ├── auth.js         # Login, registro e gerenciamento de sessao
+    └── chat.js         # Interface de chat e integracao com API
+```
+
+### Recursos
+
+- **Tela de Login/Registro**: Formularios com validacao e feedback visual
+- **Interface de Chat**: Design inspirado em apps de mensagens modernos
+- **Suporte a Imagens**: Exibicao de imagens geradas pelo DALL-E com modal de visualizacao
+- **Responsivo**: Funciona em desktop e dispositivos moveis
+- **Animacoes**: Indicador de digitacao, transicoes suaves
+
+### Como Usar
+
+1. Inicie o backend:
+```bash
+cd backend
+uvicorn app.main:app --reload
+```
+
+2. Abra o arquivo `frontend/index.html` no navegador
+
+3. Cadastre um usuario:
+   - Clique em "Cadastre-se"
+   - Preencha nome, email e senha (minimo 6 caracteres)
+   - Clique em "Cadastrar"
+
+4. Use o chat para interagir com o assistente de tintas
+
+### Capturas de Tela
+
+**Tela de Login:**
+- Design limpo com animacao de gotas de tinta
+- Alternancia facil entre login e registro
+
+**Interface de Chat:**
+- Mensagem de boas-vindas com sugestoes
+- Bolhas de mensagem estilizadas
+- Visualizacao de imagens inline
+
+### Decisoes Tecnicas
+
+- **Vanilla JS**: Sem dependencias externas para simplicidade
+- **CSS Custom Properties**: Variaveis CSS para temas consistentes
+- **Fetch API**: Comunicacao com backend via REST
+- **LocalStorage**: Persistencia de sessao do usuario
+- **CORS**: Backend configurado para aceitar requisicoes do frontend
 
 ## Endpoints da API
 
