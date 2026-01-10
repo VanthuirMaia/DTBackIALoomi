@@ -1,0 +1,33 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv
+venv/
+ENV/
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Env files (serão passadas via docker-compose)
+.env
+backend/.env
+
+# Docs e outros
+docs/
+*.md
+*.log
+
+# Tests
+.pytest_cache
+.coverage
+htmlcov/
