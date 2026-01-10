@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.api.routes import paints
+from app.api.routes import paints, chat
 
 app = FastAPI(
     title="Assistente Inteligente de Tintas",
@@ -10,6 +10,7 @@ app = FastAPI(
 
 
 app.include_router(paints.router)
+app.include_router(chat.router)
 
 
 @app.get("/health", tags=["Health"], summary="Health Check")
