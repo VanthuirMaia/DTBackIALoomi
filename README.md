@@ -14,6 +14,7 @@ API backend para um assistente virtual especializado em tintas, desenvolvido com
 - [Decisoes Tecnicas](#decisoes-tecnicas)
 - [Autenticacao e RBAC](#autenticacao-e-rbac)
 - [Seguranca e Guardrails](#seguranca-e-guardrails)
+- [Visualizacao com DALL-E](#visualizacao-com-dall-e)
 - [Ferramentas de IA Utilizadas no Desenvolvimento](#ferramentas-de-ia-utilizadas-no-desenvolvimento)
 
 ## Arquitetura
@@ -39,13 +40,17 @@ O sistema segue uma arquitetura em camadas com um agente de IA orquestrador:
               |                  |                  |
      +--------v-------+  +-------v--------+  +-----v------+
      |  RAG Service   |  |  LLM Service   |  |   Tools    |
-     |  (Embeddings)  |  |    (GPT)       |  | (5 tools)  |
+     |  (Embeddings)  |  |    (GPT)       |  | (6 tools)  |
      +--------+-------+  +----------------+  +-----+------+
               |                                    |
      +--------v-------+                    +-------v--------+
      |   PostgreSQL   |<-------------------+   Repository   |
-     |   (72 tintas)  |                    +----------------+
-     +----------------+
+     |   (72 tintas)  |                    +-------+--------+
+     +----------------+                            |
+                                           +-------v--------+
+                                           | DALL-E Service |
+                                           |  (Imagens)     |
+                                           +----------------+
 ```
 
 ### Fluxo de Processamento
@@ -56,9 +61,10 @@ O sistema segue uma arquitetura em camadas com um agente de IA orquestrador:
    - Busca semantica para recomendacoes
    - Filtros para consultas especificas
    - Calculo para quantidades
+   - Visualizacao de ambientes (DALL-E)
 4. Ferramenta executa e retorna dados
 5. LLM gera resposta contextualizada
-6. Resposta retorna ao usuario
+6. Resposta retorna ao usuario (com URL de imagem se aplicavel)
 
 ## Tecnologias
 
@@ -70,6 +76,7 @@ O sistema segue uma arquitetura em camadas com um agente de IA orquestrador:
 | LLM | OpenAI GPT-4o-mini | - |
 | Embeddings | OpenAI text-embedding-3-small | - |
 | Agente IA | LangChain + LangGraph | 0.3.14 / 0.2.62 |
+| Geracao de Imagens | OpenAI DALL-E 3 | - |
 | Containerizacao | Docker + Docker Compose | - |
 | Linguagem | Python | 3.11 |
 
@@ -105,15 +112,17 @@ BackIALoomi/
     │   └── services/
     │       ├── agent_service.py    # Orquestrador LangGraph
     │       ├── auth_service.py     # Autenticacao JWT
+    │       ├── dalle_service.py    # Integracao DALL-E (imagens)
     │       ├── guardrails_service.py # Sistema de seguranca
     │       ├── llm_service.py      # Integracao OpenAI GPT
     │       ├── rag_service.py      # Busca semantica
-    │       └── tools.py            # Ferramentas do agente
+    │       └── tools.py            # Ferramentas do agente (6)
     │
     ├── scripts/
     │   ├── import_csv.py           # Importacao de dados
     │   ├── test_auth.py            # Teste de autenticacao
     │   ├── test_chat.py            # Teste do chat
+    │   ├── test_dalle.py           # Teste do DALL-E
     │   ├── test_guardrails.py      # Teste de seguranca
     │   ├── test_langchain_agent.py # Teste do agente
     │   └── test_rag.py             # Teste do RAG
@@ -285,6 +294,12 @@ Limpa o historico de uma sessao.
 **Pergunta:** "Qual a diferenca entre as linhas Premium e Economica?"
 
 **Resposta:** O agente utiliza a ferramenta `listar_linhas_produtos` e explica as caracteristicas de cada linha.
+
+### Visualizacao de Ambiente (DALL-E)
+
+**Pergunta:** "Quero pintar minha sala de azul claro, como ficaria?"
+
+**Resposta:** O agente utiliza a ferramenta `visualizar_ambiente` para gerar uma imagem com DALL-E mostrando uma sala de estar com paredes na cor azul claro. A resposta inclui a URL da imagem gerada para o usuario visualizar.
 
 ## Decisoes Tecnicas
 
@@ -466,6 +481,72 @@ python scripts/test_guardrails.py
 ```
 
 O script testa todos os cenarios de seguranca e valida o funcionamento dos guardrails.
+
+## Visualizacao com DALL-E
+
+O sistema integra a API DALL-E 3 da OpenAI para gerar visualizacoes de ambientes pintados com diferentes cores.
+
+### Funcionamento
+
+A ferramenta `visualizar_ambiente` permite ao usuario ver como ficaria um ambiente (sala, quarto, cozinha, etc.) pintado com uma determinada cor. O agente gera uma imagem fotorrealista usando DALL-E 3.
+
+### Parametros da Ferramenta
+
+| Parametro | Tipo | Obrigatorio | Descricao |
+|-----------|------|-------------|-----------|
+| `ambiente` | string | Sim | Tipo de ambiente (sala, quarto, cozinha, banheiro, escritorio) |
+| `cor` | string | Sim | Cor da tinta para visualizar (azul claro, verde menta, etc.) |
+| `estilo` | string | Nao | Estilo de decoracao (moderno, classico, minimalista) |
+
+### Exemplo de Uso
+
+**Pergunta:**
+```
+"Quero pintar minha sala de azul claro, como ficaria?"
+```
+
+**Resposta:**
+```
+Visualizacao Gerada com Sucesso!
+
+Ambiente: Sala
+Cor: Azul Claro
+
+Imagem: https://oaidalleapiprodscus.blob.core.windows.net/...
+
+Esta e uma simulacao ilustrativa de como o ambiente poderia ficar.
+As cores reais podem variar dependendo da iluminacao e do acabamento.
+```
+
+### Ambientes Suportados
+
+- Sala de estar
+- Quarto
+- Quarto de bebe
+- Quarto infantil
+- Cozinha
+- Banheiro
+- Escritorio / Home office
+- Varanda
+- Lavanderia
+- Corredor
+- Area externa
+
+### Decisoes Tecnicas
+
+- **Modelo:** DALL-E 3 (melhor qualidade de geracao)
+- **Resolucao:** 1024x1024 (padrao)
+- **Qualidade:** Standard (equilibrio custo/qualidade)
+- **Prompts otimizados:** Geracao de prompts em portugues brasileiro focados em arquitetura residencial
+
+### Testando a Integracao
+
+```bash
+cd backend
+python scripts/test_dalle.py
+```
+
+O script testa a geracao de imagens e a integracao com o agente.
 
 ## Ferramentas de IA Utilizadas no Desenvolvimento
 

@@ -10,6 +10,7 @@ from langchain.tools import tool
 from app.db.session import SessionLocal
 from app.models.paint import Paint
 from app.services.rag_service import get_rag_service
+from app.services.dalle_service import get_dalle_service
 
 
 @tool
@@ -182,6 +183,49 @@ def listar_linhas_produtos() -> str:
 - Indicada para orçamentos limitados"""
 
 
+@tool
+def visualizar_ambiente(
+    ambiente: str,
+    cor: str,
+    estilo: Optional[str] = None
+) -> str:
+    """
+    Gera uma imagem de visualização de um ambiente pintado com a cor escolhida.
+    Use esta ferramenta quando o usuário quiser ver como ficaria um ambiente
+    pintado com uma determinada cor, ou pedir uma simulação visual.
+
+    Args:
+        ambiente: Tipo de ambiente (sala, quarto, cozinha, banheiro, escritório, varanda, etc.)
+        cor: Cor da tinta para visualizar (ex: azul claro, verde menta, branco gelo)
+        estilo: Estilo de decoração opcional (moderno, clássico, minimalista, rústico)
+
+    Returns:
+        Mensagem com URL da imagem gerada ou erro.
+    """
+    dalle = get_dalle_service()
+    result = dalle.generate_room_visualization(
+        ambiente=ambiente,
+        cor=cor,
+        estilo=estilo
+    )
+
+    if result["success"]:
+        return f"""**Visualização Gerada com Sucesso!**
+
+Ambiente: {result['ambiente'].title()}
+Cor: {result['cor'].title()}
+
+**Imagem:** {result['image_url']}
+
+Esta é uma simulação ilustrativa de como o ambiente poderia ficar com a cor escolhida.
+As cores reais podem variar dependendo da iluminação e do acabamento da tinta."""
+    else:
+        return f"""Desculpe, não foi possível gerar a visualização no momento.
+Erro: {result.get('error', 'Erro desconhecido')}
+
+Você pode tentar novamente ou me perguntar sobre outras opções de tintas."""
+
+
 # Lista de todas as ferramentas disponíveis
 def get_tools():
     """Retorna lista de todas as ferramentas disponíveis para o agente."""
@@ -191,4 +235,5 @@ def get_tools():
         calcular_quantidade_tinta,
         listar_cores_disponiveis,
         listar_linhas_produtos,
+        visualizar_ambiente,
     ]

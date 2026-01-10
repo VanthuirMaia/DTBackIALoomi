@@ -36,6 +36,14 @@ class ProductResponse(BaseModel):
     relevancia: float = Field(description="Score de relevância (0-1)")
 
 
+class ImageResponse(BaseModel):
+    """Imagem gerada pelo DALL-E."""
+
+    url: str = Field(description="URL da imagem gerada")
+    ambiente: str = Field(description="Tipo de ambiente visualizado")
+    cor: str = Field(description="Cor utilizada na visualização")
+
+
 class ChatResponse(BaseModel):
     """Response do endpoint de chat."""
 
@@ -43,6 +51,7 @@ class ChatResponse(BaseModel):
     products: list[ProductResponse] = Field(description="Produtos relacionados")
     query: str = Field(description="Pergunta original do usuário")
     session_id: Optional[str] = Field(default=None, description="ID da sessão")
+    images: list[ImageResponse] = Field(default=[], description="Imagens geradas")
 
 
 class ClearSessionRequest(BaseModel):
