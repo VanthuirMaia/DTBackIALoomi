@@ -1,0 +1,73 @@
+nome,cor,tipo_superficie,ambiente,acabamento,features,linha
+Tinta Acrílica Premium Branco Neve,Branco,Parede,Interno,Fosco,Alta cobertura e secagem rápida,Premium
+Tinta Acrílica Premium Cinza Urbano,Cinza,Parede,Interno,Acetinado,Resistente à umidade,Premium
+Tinta Acrílica Externa Verde Folha,Verde,Parede,Externo,Semi-brilho,Resistente ao sol e chuva,Premium
+Tinta Esmalte Sintético Azul Oceano,Azul,Metal,Externo,Brilhante,Alta durabilidade,Standard
+Tinta Látex Econômica Areia,Bege,Parede,Interno,Fosco,Boa cobertura e baixo custo,Econômica
+Tinta Acrílica Lavável Branco Gelo,Branco,Parede,Interno,Acetinado,Fácil limpeza,Premium
+Tinta Acrílica Externa Terracota,Terracota,Parede,Externo,Fosco,Proteção UV,Standard
+Tinta Esmalte Preto Grafite,Preto,Metal,Interno,Brilhante,Alta resistência,Standard
+Tinta Acrílica Azul Sereno,Azul,Parede,Interno,Fosco,Ambiente tranquilo,Econômica
+Tinta Acrílica Premium Amarelo Sol,Amarelo,Parede,Interno,Semi-brilho,Alta luminosidade,Premium
+Tinta Acrílica Externa Branco Polar,Branco,Parede,Externo,Fosco,Resistente à chuva,Premium
+Tinta Acrílica Verde Musgo,Verde,Parede,Interno,Acetinado,Cobertura uniforme,Standard
+Tinta Látex Econômica Cinza Claro,Cinza,Parede,Interno,Fosco,Boa relação custo-benefício,Econômica
+Tinta Esmalte Vermelho Ferrari,Vermelho,Metal,Externo,Brilhante,Alta durabilidade,Premium
+Tinta Acrílica Rosa Quartz,Rosa,Parede,Interno,Fosco,Toque suave,Standard
+Tinta Acrílica Premium Azul Profundo,Azul,Parede,Interno,Acetinado,Alta cobertura,Premium
+Tinta Acrílica Externa Cinza Concreto,Cinza,Parede,Externo,Fosco,Resistente ao tempo,Standard
+Tinta Látex Econômica Branco Simples,Branco,Parede,Interno,Fosco,Uso geral,Econômica
+Tinta Acrílica Verde Água,Verde,Parede,Interno,Semi-brilho,Ambiente fresco,Standard
+Tinta Esmalte Sintético Branco Brilho,Branco,Metal,Interno,Brilhante,Acabamento liso,Standard
+Tinta Acrílica Premium Marfim,Marfim,Parede,Interno,Fosco,Elegância e cobertura,Premium
+Tinta Acrílica Externa Azul Céu,Azul,Parede,Externo,Fosco,Proteção UV,Premium
+Tinta Látex Econômica Bege Claro,Bege,Parede,Interno,Fosco,Secagem rápida,Econômica
+Tinta Acrílica Verde Limão,Verde,Parede,Interno,Semi-brilho,Cor vibrante,Standard
+Tinta Esmalte Cinza Industrial,Cinza,Metal,Externo,Brilhante,Alta resistência mecânica,Premium
+Suvinil Toque de Seda Branco,Branco,Parede,Interno,Acetinado,Lavável e sem odor,Premium
+Suvinil Toque de Seda Pérola,Pérola,Parede,Interno,Acetinado,Lavável e sem odor,Premium
+Suvinil Toque de Seda Camurça,Camurça,Parede,Interno,Acetinado,Lavável e sem odor,Premium
+Suvinil Fachada Acrílica Branco,Branco,Parede,Externo,Fosco,Anti-mofo e impermeável,Premium
+Suvinil Fachada Acrílica Palha,Palha,Parede,Externo,Fosco,Anti-mofo e impermeável,Premium
+Suvinil Fachada Acrílica Concreto,Cinza,Parede,Externo,Fosco,Anti-mofo e impermeável,Premium
+Suvinil Fosco Completo Cinza Urbano,Cinza,Parede,Interno,Fosco,Alta cobertura e sem odor,Premium
+Suvinil Fosco Completo Branco Neve,Branco,Parede,Interno,Fosco,Alta cobertura e sem odor,Premium
+Suvinil Fosco Completo Algodão,Branco,Parede,Interno,Fosco,Alta cobertura e sem odor,Premium
+Suvinil Esmalte Sintético Madeira Natural,Marrom,Madeira,Interno,Acetinado,Resistente ao calor,Standard
+Suvinil Esmalte Sintético Mogno,Marrom,Madeira,Interno,Brilhante,Resistente ao calor e umidade,Premium
+Suvinil Esmalte Sintético Cerejeira,Marrom,Madeira,Interno,Acetinado,Resistente ao calor,Standard
+Suvinil Esmalte Sintético Branco Madeira,Branco,Madeira,Interno,Brilhante,Resistente ao calor e fácil limpeza,Premium
+Suvinil Esmalte Sintético Preto Madeira,Preto,Madeira,Externo,Brilhante,Resistente ao calor e intempéries,Premium
+Tinta para Piso Cinza,Cinza,Piso,Interno,Fosco,Alta resistência a abrasão,Standard
+Tinta para Piso Vermelho,Vermelho,Piso,Externo,Fosco,Resistente ao tráfego intenso,Standard
+Tinta para Piso Amarelo Demarcação,Amarelo,Piso,Externo,Fosco,Alta visibilidade e durabilidade,Standard
+Tinta Acrílica Gesso Branco,Branco,Gesso,Interno,Fosco,Específica para gesso e drywall,Standard
+Tinta Acrílica Gesso Marfim,Marfim,Gesso,Interno,Fosco,Específica para gesso e drywall,Standard
+Tinta Anti-Mofo Banheiro Branco,Branco,Parede,Interno,Acetinado,Anti-mofo e resistente à umidade,Premium
+Tinta Anti-Mofo Cozinha Branco,Branco,Parede,Interno,Semi-brilho,Anti-mofo e lavável,Premium
+Tinta Acrílica Sem Odor Branco,Branco,Parede,Interno,Fosco,Sem odor e baixo VOC,Premium
+Tinta Acrílica Sem Odor Gelo,Branco,Parede,Interno,Acetinado,Sem odor e secagem rápida,Premium
+Tinta Acrílica Sem Odor Rosa Suave,Rosa,Parede,Interno,Fosco,Sem odor ideal para quartos,Premium
+Tinta Acrílica Sem Odor Azul Bebê,Azul,Parede,Interno,Fosco,Sem odor ideal para quartos infantis,Premium
+Tinta Texturizada Rústica Areia,Bege,Parede,Externo,Texturizado,Efeito rústico e proteção extra,Premium
+Tinta Texturizada Grafiato Cinza,Cinza,Parede,Externo,Texturizado,Efeito grafiato decorativo,Premium
+Tinta Epóxi Piso Industrial Cinza,Cinza,Piso,Interno,Brilhante,Alta resistência química,Premium
+Tinta Epóxi Piso Garagem Cinza,Cinza,Piso,Interno,Semi-brilho,Resistente a óleo e pneus,Standard
+Verniz Marítimo Madeira,Transparente,Madeira,Externo,Brilhante,Resistente à água e sol,Premium
+Verniz Madeira Interior,Transparente,Madeira,Interno,Acetinado,Realça veios da madeira,Standard
+Stain Impregnante Cedro,Marrom,Madeira,Externo,Natural,Penetra na madeira e protege,Premium
+Stain Impregnante Ipê,Marrom,Madeira,Externo,Natural,Proteção UV e fungos,Premium
+Tinta Lousa Preto,Preto,Parede,Interno,Fosco,Permite escrever com giz,Standard
+Tinta Lousa Verde Escolar,Verde,Parede,Interno,Fosco,Permite escrever com giz,Standard
+Tinta Magnética Cinza,Cinza,Parede,Interno,Fosco,Permite fixar imãs,Premium
+Tinta Acrílica Lavável Azul Serenidade,Azul,Parede,Interno,Acetinado,Fácil limpeza e lavável,Premium
+Tinta Acrílica Lavável Verde Menta,Verde,Parede,Interno,Acetinado,Fácil limpeza e lavável,Premium
+Tinta Acrílica Lavável Cinza Platina,Cinza,Parede,Interno,Acetinado,Fácil limpeza e lavável,Premium
+Tinta Térmica Refletiva Branco,Branco,Parede,Externo,Fosco,Reflete calor e economiza energia,Premium
+Tinta Impermeabilizante Branco,Branco,Parede,Externo,Fosco,Impermeável e anti-infiltração,Premium
+Tinta Acrílica Teto Branco Neve,Branco,Teto,Interno,Fosco,Não escorre e alta cobertura,Standard
+Tinta Acrílica Teto Branco Gelo,Branco,Teto,Interno,Fosco,Anti-gota e fácil aplicação,Premium
+Primer Selador Acrílico,Branco,Parede,Interno,Fosco,Prepara superfície para pintura,Standard
+Primer Madeira Branco,Branco,Madeira,Interno,Fosco,Prepara madeira para acabamento,Standard
+Massa Corrida PVA,Branco,Parede,Interno,Fosco,Corrige imperfeições,Econômica
+Massa Acrílica,Branco,Parede,Externo,Fosco,Corrige imperfeições em áreas externas,Standard
