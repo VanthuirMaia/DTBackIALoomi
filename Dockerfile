@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
 
 # Copia requirements e instala dependências Python
 COPY requirements.txt .
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia código da aplicação
